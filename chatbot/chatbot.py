@@ -45,6 +45,7 @@ class Chatbot:
         ALL = 'all'
         INTERACTIVE = 'interactive'  # The user can write his own questions
         DAEMON = 'daemon'  # The chatbot runs on background and can regularly be called to predict something
+        ROS = 'ros'
 
     def __init__(self):
         """
@@ -89,7 +90,7 @@ class Chatbot:
         globalArgs = parser.add_argument_group('Global options')
         globalArgs.add_argument('--test',
                                 nargs='?',
-                                choices=[Chatbot.TestMode.ALL, Chatbot.TestMode.INTERACTIVE, Chatbot.TestMode.DAEMON],
+                                choices=[Chatbot.TestMode.ALL, Chatbot.TestMode.INTERACTIVE, Chatbot.TestMode.DAEMON, Chatbot.TestMode.ROS],
                                 const=Chatbot.TestMode.ALL, default=None,
                                 help='if present, launch the program try to answer all sentences from data/test/ with'
                                      ' the defined model(s), in interactive mode, the user can wrote his own sentences,'
@@ -199,23 +200,23 @@ class Chatbot:
         if self.args.initEmbeddings:
             self.loadEmbedding(self.sess)
 
-        if self.args.test:
-            if self.args.test == Chatbot.TestMode.INTERACTIVE:
-                self.mainTestInteractive(self.sess)
-            elif self.args.test == Chatbot.TestMode.ALL:
-                print('Start predicting...')
-                self.predictTestset(self.sess)
-                print('All predictions done')
-            elif self.args.test == Chatbot.TestMode.DAEMON:
-                print('Daemon mode, running in background...')
-            else:
-                raise RuntimeError('Unknown test mode: {}'.format(self.args.test))  # Should never happen
-        else:
-            self.mainTrain(self.sess)
+        # if self.args.test:
+        #     if self.args.test == Chatbot.TestMode.INTERACTIVE:
+        #         self.mainTestInteractive(self.sess)
+        #     elif self.args.test == Chatbot.TestMode.ALL:
+        #         print('Start predicting...')
+        #         self.predictTestset(self.sess)
+        #         print('All predictions done')
+        #     elif self.args.test == Chatbot.TestMode.DAEMON:
+        #         print('Daemon mode, running in background...')
+        #     else:
+        #         raise RuntimeError('Unknown test mode: {}'.format(self.args.test))  # Should never happen
+        # else:
+        #     self.mainTrain(self.sess)
 
-        if self.args.test != Chatbot.TestMode.DAEMON:
-            self.sess.close()
-            print("The End! Thanks for using this program")
+        # if self.args.test != Chatbot.TestMode.DAEMON:
+        #     self.sess.close()
+        #     print("The End! Thanks for using this program")
 
     def mainTrain(self, sess):
         """ Training loop
